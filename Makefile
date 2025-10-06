@@ -10,12 +10,17 @@
 # LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 # ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-# Author: Nils Koenig <openwrt@newk.it> 
+# Author: Nils Koenig openwrt@newk.it> 
 
 include $(TOPDIR)/rules.mk
 
+PKG_NAME:=luci-app-wifischedule-pro
+PKG_VERSION:=1.0
+PKG_RELEASE:=1
+
 LUCI_TITLE:=Turns WiFi on and off according to a schedule
 LUCI_DEPENDS:=+wifischedule
+LUCI_PKGARCH:=all
 
 include ../../luci.mk
 
