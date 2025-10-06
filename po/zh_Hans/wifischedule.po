@@ -1,0 +1,248 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Upload CSV Schedule"
+msgstr "上传CSV计划"
+
+msgid "Upload a CSV file containing date and action pairs to define WiFi schedule."
+msgstr "上传包含日期和操作对的CSV文件以定义WiFi计划。"
+
+msgid "CSV File"
+msgstr "CSV文件"
+
+msgid "Upload and Process"
+msgstr "上传并处理"
+
+msgid "CSV Format Requirements"
+msgstr "CSV格式要求"
+
+msgid "The CSV file should contain two columns: date and action"
+msgstr "CSV文件应包含两列：日期和操作"
+
+msgid "Date formats accepted: YYYY-MM-DD, MM/DD/YYYY, DD/MM/YYYY"
+msgstr "接受的日期格式：YYYY-MM-DD, MM/DD/YYYY, DD/MM/YYYY"
+
+msgid "Action values: \"on\"/\"enable\"/\"start\" or \"off\"/\"disable\"/\"stop\""
+msgstr "操作值：\"on\"/\"enable\"/\"start\" 或 \"off\"/\"disable\"/\"stop\""
+
+msgid "Example:"
+msgstr "示例："
+
+msgid "Holiday Configuration"
+msgstr "节假日配置"
+
+msgid "Configure holiday settings using external API or CSV upload."
+msgstr "使用外部API或CSV上传配置节假日设置。"
+
+msgid "External Holiday API"
+msgstr "外部节假日API"
+
+msgid "Use external API to check for holidays in specific regions. This has the highest priority."
+msgstr "使用外部API检查特定地区的节假日。这具有最高优先级。"
+
+msgid "API URL"
+msgstr "API网址"
+
+msgid "Use {date}, {region}, {country}, {language} as placeholders. Example: https://date.nager.at/api/v3/PublicHoliday/{date}/{region} or https://some-api.com/holidays?date={date}&country={country}&lang={language}"
+msgstr "使用{date}, {region}, {country}, {language}作为占位符。示例：https://date.nager.at/api/v3/PublicHoliday/{date}/{region} 或 https://some-api.com/holidays?date={date}&country={country}&lang={language}"
+
+msgid "API Key"
+msgstr "API密钥"
+
+msgid "API key if required"
+msgstr "如果需要API密钥"
+
+msgid "Region Code"
+msgstr "地区代码"
+
+msgid "Region code used by the API (e.g., US, GB, DE)"
+msgstr "API使用的地区代码（例如：US, GB, DE）"
+
+msgid "Country Code"
+msgstr "国家代码"
+
+msgid "Country code parameter for the API (alternative to region)"
+msgstr "API的国家代码参数（地区代码的替代）"
+
+msgid "Language"
+msgstr "语言"
+
+msgid "Language code for localized holiday names (e.g., en, de, fr)"
+msgstr "本地化节假日名称的语言代码（例如：en, de, fr）"
+
+msgid "Save API Configuration"
+msgstr "保存API配置"
+
+msgid "Test API Connection"
+msgstr "测试API连接"
+
+msgid "CSV Upload"
+msgstr "CSV上传"
+
+msgid "Upload a CSV file containing specific date schedules. This has higher priority than predefined holidays but lower than API."
+msgstr "上传包含特定日期计划的CSV文件。这比预定义节假日有更高的优先级，但比API低。"
+
+msgid "Priority Order"
+msgstr "优先级顺序"
+
+msgid "External Holiday API (Highest Priority)"
+msgstr "外部节假日API（最高优先级）"
+
+msgid "CSV Upload Schedule"
+msgstr "CSV上传计划"
+
+msgid "Predefined Holiday Calendar"
+msgstr "预定义节假日日历"
+
+msgid "Weekend Schedule"
+msgstr "周末计划"
+
+msgid "Workday Schedule"
+msgstr "工作日计划"
+
+msgid "Default Schedule (Lowest Priority)"
+msgstr "默认计划（最低优先级）"
+
+msgid "API configuration saved successfully"
+msgstr "API配置保存成功"
+
+msgid "Error saving API configuration"
+msgstr "保存API配置时出错"
+
+msgid "Please enter an API URL first"
+msgstr "请先输入API网址"
+
+msgid "Test result"
+msgstr "测试结果"
+
+msgid "is a holiday"
+msgstr "是节假日"
+
+msgid "is NOT a holiday"
+msgstr "不是节假日"
+
+msgid "Could not determine if"
+msgstr "无法确定"
+
+msgid "is a holiday"
+msgstr "是节假日"
+
+msgid "Invalid date format. Please use YYYY-MM-DD"
+msgstr "日期格式无效。请使用YYYY-MM-DD"
+
+msgid "API test failed"
+msgstr "API测试失败"
+
+msgid "Testing..."
+msgstr "测试中..."
+
+msgid "Enter date to test (YYYY-MM-DD format)"
+msgstr "输入要测试的日期（YYYY-MM-DD格式）"
+
+msgid "Holiday API URL"
+msgstr "节假日API网址"
+
+msgid "Holiday API Region Code"
+msgstr "节假日API地区代码"
+
+msgid "Wifi Schedule"
+msgstr "WiFi计划"
+
+msgid "Defines a schedule when to turn on and off wifi."
+msgstr "定义打开和关闭WiFi的计划。"
+
+msgid "Region for Holiday Calendar"
+msgstr "节假日日历地区"
+
+msgid "China"
+msgstr "中国"
+
+msgid "United States"
+msgstr "美国"
+
+msgid "European Union"
+msgstr "欧盟"
+
+msgid "Custom"
+msgstr "自定义"
+
+msgid "Workday WiFi Start Time"
+msgstr "工作日WiFi开启时间"
+
+msgid "Workday WiFi Stop Time"
+msgstr "工作日WiFi关闭时间"
+
+msgid "Weekend WiFi Start Time"
+msgstr "周末WiFi开启时间"
+
+msgid "Weekend WiFi Stop Time"
+msgstr "周末WiFi关闭时间"
+
+msgid "Holiday WiFi Start Time"
+msgstr "节假日WiFi开启时间"
+
+msgid "Holiday WiFi Stop Time"
+msgstr "节假日WiFi关闭时间"
+
+msgid "Enable Wifi Schedule"
+msgstr "启用WiFi计划"
+
+msgid "Could not find required /usr/bin/wifi_schedule.sh or /sbin/wifi"
+msgstr "找不到必需的 /usr/bin/wifi_schedule.sh 或 /sbin/wifi"
+
+msgid "Enable logging"
+msgstr "启用日志"
+
+msgid "Activate wifi"
+msgstr "激活WiFi"
+
+msgid "Disable wifi gracefully"
+msgstr "优雅地禁用WiFi"
+
+msgid "Disabled wifi forced"
+msgstr "强制禁用WiFi"
+
+msgid "Unload Modules (experimental; saves more power)"
+msgstr "卸载模块（实验性；节省更多电力）"
+
+msgid "Determine Modules Automatically"
+msgstr "自动确定模块"
+
+msgid "Upload CSV File"
+msgstr "上传CSV文件"
+
+msgid "Upload CSV Schedule (overrides other scheduling types)"
+msgstr "上传CSV计划（覆盖其他计划类型）"
+
+msgid "Legacy Weekly Schedule (Lower Priority)"
+msgstr "传统周计划（较低优先级）"
+
+msgid "Upload CSV Schedule"
+msgstr "上传CSV计划"
+
+msgid "Legacy weekly schedule entries (used when no CSV or holiday schedule matches). These have lower priority than CSV schedules and holiday-specific schedules."
+msgstr "传统周计划条目（在没有CSV或节假日计划匹配时使用）。这些比CSV计划和特定节假日计划有较低的优先级。"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Day(s) of Week"
+msgstr "星期几"
+
+msgid "Start WiFi"
+msgstr "开启WiFi"
+
+msgid "Stop WiFi"
+msgstr "关闭WiFi"
+
+msgid "Force disabling wifi even if stations associated"
+msgstr "即使有设备连接也强制禁用WiFi"
+
+msgid "Could not find required programm /usr/bin/iwinfo"
+msgstr "找不到必需的程序 /usr/bin/iwinfo"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Success"
+msgstr "成功"

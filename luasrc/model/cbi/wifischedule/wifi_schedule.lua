@@ -11,6 +11,7 @@
 -- ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --
 -- Author: Nils Koenig <openwrt@newk.it>
+-- Enhanced by: Assistant for multi-region and CSV support
 
 function file_exists(name)
    local f=io.open(name,"r")
@@ -71,13 +72,257 @@ function global_enable.validate(self, value, global_section)
 end
 -- END Global Enable Checkbox
 
+-- BEGIN Region Selection
+local calendar = require "luci.util.wifischedule.calendar"
+local api = require "luci.util.wifischedule.api"
+
+region = global_section:option(ListValue, "region", translate("Region for Holiday Calendar"))
+region.default = "custom"
+region:value("china", translate("China"))
+region:value("us", translate("United States"))
+region:value("eu", translate("European Union"))
+region:value("custom", translate("Custom"))
+
+-- BEGIN Holiday API Settings
+holiday_api_url = global_section:option(Value, "holiday_api_url", translate("Holiday API URL"))
+holiday_api_url.optional = true
+holiday_api_url:depends("enabled", "1")
+holiday_api_url.description = translate("URL for external holiday API. Use {date} and {region} as placeholders, e.g., https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}")
+
+holiday_api_key = global_section:option(Value, "holiday_api_key", translate("Holiday API Key"))
+holiday_api_key.optional = true
+holiday_api_key:depends("enabled", "1")
+holiday_api_key.password = true
+holiday_api_key.description = translate("API key if required by the holiday service")
+
+holiday_api_region = global_section:option(Value, "holiday_api_region", translate("Holiday API Region Code"))
+holiday_api_region.optional = true
+holiday_api_region:depends("enabled", "1")
+holiday_api_region.description = translate("Region code used by the holiday API (e.g., US, GB, DE). Overrides the region setting for API calls.")
+
+holiday_api_country = global_section:option(Value, "holiday_api_country", translate("Holiday API Country Code"))
+holiday_api_country.optional = true
+holiday_api_country:depends("enabled", "1")
+holiday_api_country.description = translate("Country code parameter for the holiday API (alternative to region)")
+
+holiday_api_language = global_section:option(Value, "holiday_api_language", translate("Holiday API Language"))
+holiday_api_language.optional = true
+holiday_api_language:depends("enabled", "1")
+holiday_api_language.description = translate("Language code for localized holiday names (e.g., en, de, fr)")
+
+-- BEGIN Workday Schedule Settings
+workday_starttime = global_section:option(Value, "workday_starttime", translate("Workday WiFi Start Time"))
+workday_starttime.optional = true
+workday_starttime:value("00:00")
+workday_starttime:value("01:00")
+workday_starttime:value("02:00")
+workday_starttime:value("03:00")
+workday_starttime:value("04:00")
+workday_starttime:value("05:00")
+workday_starttime:value("06:00")
+workday_starttime:value("07:00")
+workday_starttime:value("08:00")
+workday_starttime:value("09:00")
+workday_starttime:value("10:00")
+workday_starttime:value("11:00")
+workday_starttime:value("12:00")
+workday_starttime:value("13:00")
+workday_starttime:value("14:00")
+workday_starttime:value("15:00")
+workday_starttime:value("16:00")
+workday_starttime:value("17:00")
+workday_starttime:value("18:00")
+workday_starttime:value("19:00")
+workday_starttime:value("20:00")
+workday_starttime:value("21:00")
+workday_starttime:value("22:00")
+workday_starttime:value("23:00")
+function workday_starttime.validate(self, value, section)
+    if value and value ~= "" then
+        return time_validator(self, value, translate("Workday Start Time"))
+    end
+    return value
+end
+
+workday_stoptime = global_section:option(Value, "workday_stoptime", translate("Workday WiFi Stop Time"))
+workday_stoptime.optional = true
+workday_stoptime:value("00:00")
+workday_stoptime:value("01:00")
+workday_stoptime:value("02:00")
+workday_stoptime:value("03:00")
+workday_stoptime:value("04:00")
+workday_stoptime:value("05:00")
+workday_stoptime:value("06:00")
+workday_stoptime:value("07:00")
+workday_stoptime:value("08:00")
+workday_stoptime:value("09:00")
+workday_stoptime:value("10:00")
+workday_stoptime:value("11:00")
+workday_stoptime:value("12:00")
+workday_stoptime:value("13:00")
+workday_stoptime:value("14:00")
+workday_stoptime:value("15:00")
+workday_stoptime:value("16:00")
+workday_stoptime:value("17:00")
+workday_stoptime:value("18:00")
+workday_stoptime:value("19:00")
+workday_stoptime:value("20:00")
+workday_stoptime:value("21:00")
+workday_stoptime:value("22:00")
+workday_stoptime:value("23:00")
+function workday_stoptime.validate(self, value, section)
+    if value and value ~= "" then
+        return time_validator(self, value, translate("Workday Stop Time"))
+    end
+    return value
+end
+
+-- END Workday Schedule Settings
+
+-- BEGIN Weekend Schedule Settings
+weekend_starttime = global_section:option(Value, "weekend_starttime", translate("Weekend WiFi Start Time"))
+weekend_starttime.optional = true
+weekend_starttime:value("00:00")
+weekend_starttime:value("01:00")
+weekend_starttime:value("02:00")
+weekend_starttime:value("03:00")
+weekend_starttime:value("04:00")
+weekend_starttime:value("05:00")
+weekend_starttime:value("06:00")
+weekend_starttime:value("07:00")
+weekend_starttime:value("08:00")
+weekend_starttime:value("09:00")
+weekend_starttime:value("10:00")
+weekend_starttime:value("11:00")
+weekend_starttime:value("12:00")
+weekend_starttime:value("13:00")
+weekend_starttime:value("14:00")
+weekend_starttime:value("15:00")
+weekend_starttime:value("16:00")
+weekend_starttime:value("17:00")
+weekend_starttime:value("18:00")
+weekend_starttime:value("19:00")
+weekend_starttime:value("20:00")
+weekend_starttime:value("21:00")
+weekend_starttime:value("22:00")
+weekend_starttime:value("23:00")
+function weekend_starttime.validate(self, value, section)
+    if value and value ~= "" then
+        return time_validator(self, value, translate("Weekend Start Time"))
+    end
+    return value
+end
+
+weekend_stoptime = global_section:option(Value, "weekend_stoptime", translate("Weekend WiFi Stop Time"))
+weekend_stoptime.optional = true
+weekend_stoptime:value("00:00")
+weekend_stoptime:value("01:00")
+weekend_stoptime:value("02:00")
+weekend_stoptime:value("03:00")
+weekend_stoptime:value("04:00")
+weekend_stoptime:value("05:00")
+weekend_stoptime:value("06:00")
+weekend_stoptime:value("07:00")
+weekend_stoptime:value("08:00")
+weekend_stoptime:value("09:00")
+weekend_stoptime:value("10:00")
+weekend_stoptime:value("11:00")
+weekend_stoptime:value("12:00")
+weekend_stoptime:value("13:00")
+weekend_stoptime:value("14:00")
+weekend_stoptime:value("15:00")
+weekend_stoptime:value("16:00")
+weekend_stoptime:value("17:00")
+weekend_stoptime:value("18:00")
+weekend_stoptime:value("19:00")
+weekend_stoptime:value("20:00")
+weekend_stoptime:value("21:00")
+weekend_stoptime:value("22:00")
+weekend_stoptime:value("23:00")
+function weekend_stoptime.validate(self, value, section)
+    if value and value ~= "" then
+        return time_validator(self, value, translate("Weekend Stop Time"))
+    end
+    return value
+end
+
+-- END Weekend Schedule Settings
+
+-- BEGIN Holiday Schedule Settings
+holiday_starttime = global_section:option(Value, "holiday_starttime", translate("Holiday WiFi Start Time"))
+holiday_starttime.optional = true
+holiday_starttime:value("00:00")
+holiday_starttime:value("01:00")
+holiday_starttime:value("02:00")
+holiday_starttime:value("03:00")
+holiday_starttime:value("04:00")
+holiday_starttime:value("05:00")
+holiday_starttime:value("06:00")
+holiday_starttime:value("07:00")
+holiday_starttime:value("08:00")
+holiday_starttime:value("09:00")
+holiday_starttime:value("10:00")
+holiday_starttime:value("11:00")
+holiday_starttime:value("12:00")
+holiday_starttime:value("13:00")
+holiday_starttime:value("14:00")
+holiday_starttime:value("15:00")
+holiday_starttime:value("16:00")
+holiday_starttime:value("17:00")
+holiday_starttime:value("18:00")
+holiday_starttime:value("19:00")
+holiday_starttime:value("20:00")
+holiday_starttime:value("21:00")
+holiday_starttime:value("22:00")
+holiday_starttime:value("23:00")
+function holiday_starttime.validate(self, value, section)
+    if value and value ~= "" then
+        return time_validator(self, value, translate("Holiday Start Time"))
+    end
+    return value
+end
+
+holiday_stoptime = global_section:option(Value, "holiday_stoptime", translate("Holiday WiFi Stop Time"))
+holiday_stoptime.optional = true
+holiday_stoptime:value("00:00")
+holiday_stoptime:value("01:00")
+holiday_stoptime:value("02:00")
+holiday_stoptime:value("03:00")
+holiday_stoptime:value("04:00")
+holiday_stoptime:value("05:00")
+holiday_stoptime:value("06:00")
+holiday_stoptime:value("07:00")
+holiday_stoptime:value("08:00")
+holiday_stoptime:value("09:00")
+holiday_stoptime:value("10:00")
+holiday_stoptime:value("11:00")
+holiday_stoptime:value("12:00")
+holiday_stoptime:value("13:00")
+holiday_stoptime:value("14:00")
+holiday_stoptime:value("15:00")
+holiday_stoptime:value("16:00")
+holiday_stoptime:value("17:00")
+holiday_stoptime:value("18:00")
+holiday_stoptime:value("19:00")
+holiday_stoptime:value("20:00")
+holiday_stoptime:value("21:00")
+holiday_stoptime:value("22:00")
+holiday_stoptime:value("23:00")
+function holiday_stoptime.validate(self, value, section)
+    if value and value ~= "" then
+        return time_validator(self, value, translate("Holiday Stop Time"))
+    end
+    return value
+end
+
+-- END Holiday Schedule Settings
 
 -- BEGIN Global Logging Checkbox
 global_logging = global_section:option(Flag, "logging", translate("Enable logging"))
 global_logging.optional=false; 
 global_logging.rmempty = false;
 global_logging.default = 0
--- END Global Enable Checkbox
+-- END Global Logging Checkbox
 
 -- BEGIN Global Activate WiFi Button
 enable_wifi = global_section:option(Button, "enable_wifi", translate("Activate wifi"))
@@ -122,6 +367,7 @@ function modules.cfgvalue(self, section)
     return mod:gsub(" ", "\r\n")
 end
 
+
 function modules.write(self, section, value)
     if value then
         value_list = value:gsub("\r\n", " ")
@@ -140,9 +386,24 @@ function determine_modules.write(self, section)
 end
 -- END Determine Modules
 
+-- BEGIN CSV Upload Section
+csv_section = m:section(TypedSection, "csv", "CSV Schedule Upload", translate("Upload CSV file to define specific date schedules (overrides other scheduling types)"))
+csv_section.addremove = false
+csv_section.anonymous = true
+
+csv_upload_btn = csv_section:option(Button, "_upload_csv", translate("Upload CSV Schedule"))
+csv_upload_btn.inputtitle = translate("Upload CSV File")
+csv_upload_btn:depends("enabled", "1") -- Only show if main scheduling is enabled
+function csv_upload_btn.write(self, section)
+    -- Redirect to the upload page
+    luci.http.redirect(luci.dispatcher.build_url("admin", "wifi_schedule", "upload_csv"))
+end
+
+-- END CSV Upload Section
 
 -- BEGIN Section
-d = m:section(TypedSection, "entry", "Schedule events")
+d = m:section(TypedSection, "entry", "Legacy Weekly Schedule (Lower Priority)", 
+    translate("Legacy weekly schedule entries (used when no CSV or holiday schedule matches). These have lower priority than CSV schedules and holiday-specific schedules."))
 d.addremove = true  
 --d.anonymous = true
 -- END Section

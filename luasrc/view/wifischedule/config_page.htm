@@ -1,0 +1,214 @@
+<%#
+Copyright (c) 2025, Assistant
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without
+fee is hereby granted, provided that the above copyright notice and this permission notice appear
+in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
+FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+-%>
+
+<%+header%>
+
+<h2 name="content"><%:Holiday Configuration%></h2>
+<div class="cbi-map-descr">
+<%:Configure holiday settings using external API or CSV upload.%>
+</div>
+
+<div class="cbi-section" id="holiday-api-section">
+    <h3><%:External Holiday API%></h3>
+    <div class="cbi-section-descr">
+        <%:Use external API to check for holidays in specific regions.%>
+    </div>
+    <div class="cbi-section-node">
+        <form id="api-config-form" method="post" action="<%=luci.dispatcher.build_url("admin", "wifi_schedule", "api")%>" enctype="application/x-www-form-urlencoded">
+            <input type="hidden" name="action" value="update_api_config" />
+            <input type="hidden" name="token" value="<%=token%>" />
+            
+            <div class="cbi-value">
+                <label class="cbi-value-title" for="holiday_api_url"><%:API URL%>:</label>
+                <div class="cbi-value-field">
+                    <input type="url" name="holiday_api_url" id="holiday_api_url" value="<%=holiday_api_url or ""%>" class="cbi-input-text" placeholder="https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}" />
+                    <div class="cbi-value-description"><%:Use {date} and {region} as placeholders. Example: https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}%></div>
+                </div>
+            </div>
+            
+            <div class="cbi-value">
+                <label class="cbi-value-title" for="holiday_api_key"><%:API Key%>:</label>
+                <div class="cbi-value-field">
+                    <input type="password" name="holiday_api_key" id="holiday_api_key" value="<%=holiday_api_key or ""%>" class="cbi-input-text" />
+                    <div class="cbi-value-description"><%:API key if required by the service%></div>
+                </div>
+            </div>
+            
+            <div class="cbi-value">
+                <label class="cbi-value-title" for="holiday_api_region"><%:Region Code%>:</label>
+                <div class="cbi-value-field">
+                    <input type="text" name="holiday_api_region" id="holiday_api_region" value="<%=holiday_api_region or ""%>" class="cbi-input-text" placeholder="US, GB, DE, etc." />
+                    <div class="cbi-value-description"><%:Region code used by the API (e.g., US, GB, DE)%></div>
+                </div>
+            </div>
+            
+            <div class="cbi-value">
+                <div class="cbi-value-field">
+                    <input type="button" class="btn cbi-button cbi-button-apply" value="<%:Save API Configuration%>" onclick="saveApiConfig()" />
+                    <input type="button" class="btn cbi-button cbi-button-action" value="<%:Test API Connection%>" onclick="testApiConnection()" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="cbi-section" id="csv-upload-section">
+    <h3><%:CSV Upload%></h3>
+    <div class="cbi-section-descr">
+        <%:Upload a CSV file containing specific date schedules. This has higher priority than API or predefined holidays.%>
+    </div>
+    <div class="cbi-section-node">
+        <form method="post" enctype="multipart/form-data" action="<%=luci.dispatcher.build_url("admin", "wifi_schedule", "upload_csv")%>">
+            <div class="cbi-value">
+                <label class="cbi-value-title" for="csv_file"><%:CSV File%>:</label>
+                <div class="cbi-value-field">
+                    <input type="file" name="csv_file" id="csv_file" accept=".csv" required />
+                </div>
+            </div>
+            
+            <div class="cbi-value">
+                <div class="cbi-value-field">
+                    <input type="submit" class="btn cbi-button cbi-button-positive" value="<%:Upload and Process%>" />
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <h4><%:CSV Format Requirements%></h4>
+    <ul>
+        <li><%:The CSV file should contain two columns: date and action%></li>
+        <li><%:Date formats accepted: YYYY-MM-DD, MM/DD/YYYY, DD/MM/YYYY%></li>
+        <li><%:Action values: "on"/"enable"/"start" or "off"/"disable"/"stop"%></li>
+        <li><%:Example:%>
+            <pre class="code">date,action
+2025-01-01,disable
+2025-01-02,enable
+2025-12-25,disable</pre>
+        </li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+    function saveApiConfig() {
+        const form = document.getElementById('api-config-form');
+        const formData = new FormData();
+        
+        formData.append('action', 'update_api_config');
+        formData.append('token', '<%=token%>');
+        formData.append('holiday_api_url', document.getElementById('holiday_api_url').value);
+        formData.append('holiday_api_key', document.getElementById('holiday_api_key').value);
+        formData.append('holiday_api_region', document.getElementById('holiday_api_region').value);
+        
+        fetch('<%=luci.dispatcher.build_url("admin", "wifi_schedule", "api")%>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('<%:API configuration saved successfully%>');
+            } else {
+                alert('<%:Error saving API configuration%>: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('<%:Error saving API configuration%>: ' + error);
+        });
+    }
+    
+    function testApiConnection() {
+        const date = document.getElementById('test_date').value || '<%=os.date("%Y-%m-%d")%>';
+        const region = document.getElementById('holiday_api_region').value || 'US';
+        const url = document.getElementById('holiday_api_url').value;
+        
+        if (!url) {
+            alert('<%:Please enter an API URL first%>');
+            return;
+        }
+        
+        // Format the API URL with placeholders
+        const formattedUrl = url.replace('{date}', date).replace('{region}', region);
+        
+        fetch('<%=luci.dispatcher.build_url("admin", "wifi_schedule", "api")%>?action=is_holiday_external&date=' + date + '&region=' + region, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('<%:API test failed%>: ' + data.error);
+            } else {
+                if (data.is_holiday === true) {
+                    alert('<%:Test result%>: ' + date + ' <%:is a holiday%> (' + (data.name || 'Public Holiday') + ')');
+                } else if (data.is_holiday === false) {
+                    alert('<%:Test result%>: ' + date + ' <%:is NOT a holiday%>');
+                } else {
+                    alert('<%:Test result%>: <%:Could not determine if%> ' + date + ' <%:is a holiday%>');
+                }
+            }
+        })
+        .catch(error => {
+            alert('<%:API test failed%>: ' + error);
+        });
+    }
+//]]>
+</script>
+
+<style type="text/css">
+    .code {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-family: monospace;
+        white-space: pre;
+        overflow-x: auto;
+    }
+    
+    .cbi-section {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fafafa;
+    }
+    
+    .cbi-section h3 {
+        margin-top: 0;
+        color: #333;
+    }
+    
+    .cbi-value {
+        margin: 1rem 0;
+    }
+    
+    .cbi-value-title {
+        font-weight: bold;
+        display: inline-block;
+        width: 200px;
+        vertical-align: top;
+    }
+    
+    .cbi-value-field {
+        display: inline-block;
+        width: calc(100% - 220px);
+    }
+    
+    .cbi-value-description {
+        font-size: 0.85em;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+</style>
+
+<%+footer%>
