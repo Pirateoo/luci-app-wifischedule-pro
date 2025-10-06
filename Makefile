@@ -22,6 +22,6 @@ LUCI_TITLE:=Turns WiFi on and off according to a schedule
 LUCI_DEPENDS:=+wifischedule
 LUCI_PKGARCH:=all
 
-include ../../luci.mk
+include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
