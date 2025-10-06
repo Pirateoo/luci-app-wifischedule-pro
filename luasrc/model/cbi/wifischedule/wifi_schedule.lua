@@ -13,6 +13,8 @@
 -- Author: Nils Koenig <openwrt@newk.it>
 -- Enhanced by: Assistant for multi-region and CSV support
 
+local uci = require "luci.model.uci".cursor()
+
 function file_exists(name)
    local f=io.open(name,"r")
    if f~=nil then io.close(f) return true else return false end
@@ -371,8 +373,9 @@ end
 function modules.write(self, section, value)
     if value then
         value_list = value:gsub("\r\n", " ")
-        ListValue.write(self, section, value_list)
-        uci.set("wifi_schedule", section, "modules", value_list)
+        uci:set("wifi_schedule", section, "modules", value_list)
+        uci:save("wifi_schedule")
+        uci:commit("wifi_schedule")
     end
 end
 -- END Modules
