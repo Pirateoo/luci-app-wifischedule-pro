@@ -92,10 +92,11 @@ enable_api.optional = true
 enable_api.rmempty = false
 enable_api.default = 0
 
--- Holiday API URL - only shown when API is enabled
-holiday_api_url = global_section:option(Value, "holiday_api_url", translate("Holiday API URL"))
-holiday_api_url:depends("enable_api", "1")
+-- Holiday API URL - only shown when API is enabled (using proper dependency syntax)
+holiday_api_url = global_section:option(TextValue, "holiday_api_url", translate("Holiday API URL"))
+holiday_api_url:depends({enable_api = "1"})
 holiday_api_url.optional = true
+holiday_api_url.rows = 3
 holiday_api_url.description = translate("URL for external holiday API. Use {date}, {region}, {country}, {language} as placeholders, e.g., https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}")
 
 -- API Key (optional)
@@ -135,6 +136,8 @@ function current_api_url.cfgvalue(self, section)
     end
 end
 current_api_url.description = translate("Shows the currently configured API URL")
+
+-- Fix: Ensure these fields are properly defined with proper handling
 
 
 

@@ -139,6 +139,9 @@ msgstr "测试中..."
 msgid "Enter date to test (YYYY-MM-DD format)"
 msgstr "输入要测试的日期（YYYY-MM-DD格式）"
 
+msgid "Enable External Holiday API"
+msgstr "启用外部节假日API"
+
 msgid "Holiday API URL"
 msgstr "节假日API网址"
 
