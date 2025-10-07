@@ -74,10 +74,11 @@ function global_enable.validate(self, value, global_section)
 end
 -- END Global Enable Checkbox
 
--- BEGIN Region Selection
+-- BEGIN Region Selection with API Configuration
 local calendar = require "luci.util.wifischedule.calendar"
 local api = require "luci.util.wifischedule.api"
 
+-- Region selection as a general setting
 region = global_section:option(ListValue, "region", translate("Region for Holiday Calendar"))
 region.default = "custom"
 region:value("china", translate("China"))
@@ -85,32 +86,55 @@ region:value("us", translate("United States"))
 region:value("eu", translate("European Union"))
 region:value("custom", translate("Custom"))
 
--- BEGIN Holiday API Settings
-holiday_api_url = global_section:option(Value, "holiday_api_url", translate("Holiday API URL"))
-holiday_api_url.optional = true
-holiday_api_url:depends("enabled", "1")
-holiday_api_url.description = translate("URL for external holiday API. Use {date} and {region} as placeholders, e.g., https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}")
+-- Add option to enable API configuration
+enable_api = global_section:option(Flag, "enable_api", translate("Enable External Holiday API"))
+enable_api.optional = true
+enable_api.rmempty = false
+enable_api.default = 0
 
+-- Holiday API URL - only shown when API is enabled
+holiday_api_url = global_section:option(Value, "holiday_api_url", translate("Holiday API URL"))
+holiday_api_url:depends("enable_api", "1")
+holiday_api_url.optional = true
+holiday_api_url.description = translate("URL for external holiday API. Use {date}, {region}, {country}, {language} as placeholders, e.g., https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}")
+
+-- API Key (optional)
 holiday_api_key = global_section:option(Value, "holiday_api_key", translate("Holiday API Key"))
 holiday_api_key.optional = true
-holiday_api_key:depends("enabled", "1")
+holiday_api_key:depends("enable_api", "1")
 holiday_api_key.password = true
 holiday_api_key.description = translate("API key if required by the holiday service")
 
+-- API Region Code
 holiday_api_region = global_section:option(Value, "holiday_api_region", translate("Holiday API Region Code"))
 holiday_api_region.optional = true
-holiday_api_region:depends("enabled", "1")
+holiday_api_region:depends("enable_api", "1")
 holiday_api_region.description = translate("Region code used by the holiday API (e.g., US, GB, DE). Overrides the region setting for API calls.")
 
+-- API Country Code
 holiday_api_country = global_section:option(Value, "holiday_api_country", translate("Holiday API Country Code"))
 holiday_api_country.optional = true
-holiday_api_country:depends("enabled", "1")
+holiday_api_country:depends("enable_api", "1")
 holiday_api_country.description = translate("Country code parameter for the holiday API (alternative to region)")
 
+-- API Language
 holiday_api_language = global_section:option(Value, "holiday_api_language", translate("Holiday API Language"))
 holiday_api_language.optional = true
-holiday_api_language:depends("enabled", "1")
+holiday_api_language:depends("enable_api", "1")
 holiday_api_language.description = translate("Language code for localized holiday names (e.g., en, de, fr)")
+
+-- Current API URL display
+current_api_url = global_section:option(DummyValue, "_current_api_url", translate("Current API URL"))
+current_api_url:depends("enable_api", "1")
+function current_api_url.cfgvalue(self, section)
+    local uci_api_url = self.map:get(section, "holiday_api_url")
+    if uci_api_url and uci_api_url ~= "" then
+        return uci_api_url
+    else
+        return translate("No API URL configured")
+    end
+end
+current_api_url.description = translate("Shows the currently configured API URL")
 
 
 
@@ -197,47 +221,111 @@ end
 
 -- END CSV Upload Section
 
--- Replace legacy weekly schedule with workday/holiday/weekend specific options in the global section
+-- BEGIN Section
+d = m:section(TypedSection, "entry", "Legacy Weekly Schedule (Lower Priority)", 
+    translate("Legacy weekly schedule entries (used when no CSV or holiday schedule matches). These have lower priority than CSV schedules and holiday-specific schedules."))
+d.addremove = true  
+--d.anonymous = true
+-- END Section
 
--- BEGIN Workday Schedule Options (stored in global section)
-workday_enabled = global_section:option(Flag, "workday_enabled", translate("Enable Workday Schedule"))
-workday_enabled.optional = false
-workday_enabled.rmempty = false
-workday_enabled.default = 1
+-- BEGIN Enable Checkbox
+c = d:option(Flag, "enabled", translate("Enable"))
+c.optional=false; c.rmempty = false;
+-- END Enable Checkbox
 
-workday_starttime = global_section:option(Value, "workday_starttime", translate("Workday WiFi Start Time"))
-workday_starttime:depends("workday_enabled", "1")
-workday_starttime.optional = false
-workday_starttime.rmempty = false
-for hour = 0, 23 do
-    workday_starttime:value(string.format("%02d:00", hour))
-    if hour ~= 23 then
-        workday_starttime:value(string.format("%02d:30", hour))
-    end
-end
-function workday_starttime.validate(self, value, section)
-    return time_validator(self, value, translate("Workday Start Time"))
+
+-- BEGIN Day(s) of Week
+dow = d:option(MultiValue, "daysofweek", translate("Day(s) of Week"))
+dow.optional = false
+dow.rmempty = false
+dow:value("Monday")
+dow:value("Tuesday")
+dow:value("Wednesday")
+dow:value("Thursday")
+dow:value("Friday")
+dow:value("Saturday")
+dow:value("Sunday")
+dow:value("Workdays", translate("Workdays"))
+dow:value("Holidays", translate("Holidays"))
+-- END Day(s) of Week
+
+-- BEGIN Start Wifi Dropdown
+starttime =  d:option(Value, "starttime", translate("Start WiFi"))
+starttime.optional=false; 
+starttime.rmempty = false;
+starttime:value("00:00")
+starttime:value("01:00")
+starttime:value("02:00")
+starttime:value("03:00")
+starttime:value("04:00")
+starttime:value("05:00")
+starttime:value("06:00")
+starttime:value("07:00")
+starttime:value("08:00")
+starttime:value("09:00")
+starttime:value("10:00")
+starttime:value("11:00")
+starttime:value("12:00")
+starttime:value("13:00")
+starttime:value("14:00")
+starttime:value("15:00")
+starttime:value("16:00")
+starttime:value("17:00")
+starttime:value("18:00")
+starttime:value("19:00")
+starttime:value("20:00")
+starttime:value("21:00")
+starttime:value("22:00")
+starttime:value("23:00")
+
+function starttime.validate(self, value, d)
+    return time_validator(self, value, translate("Start Time"))
 end
 
-workday_stoptime = global_section:option(Value, "workday_stoptime", translate("Workday WiFi Stop Time"))
-workday_stoptime:depends("workday_enabled", "1")
-workday_stoptime.optional = false
-workday_stoptime.rmempty = false
-for hour = 0, 23 do
-    workday_stoptime:value(string.format("%02d:00", hour))
-    if hour ~= 23 then
-        workday_stoptime:value(string.format("%02d:30", hour))
-    end
-end
-function workday_stoptime.validate(self, value, section)
-    return time_validator(self, value, translate("Workday Stop Time"))
-end
+-- END Start Wifi Dropdown
 
-workday_forcewifidown = global_section:option(Flag, "workday_forcewifidown", translate("Force disabling wifi even if stations associated on workdays"))
-workday_forcewifidown:depends("workday_enabled", "1")
-workday_forcewifidown.default = false
-workday_forcewifidown.rmempty = false
-function workday_forcewifidown.validate(self, value, section)
+
+-- BEGIN Stop Wifi Dropdown
+stoptime =  d:option(Value, "stoptime", translate("Stop WiFi"))
+stoptime.optional=false;
+stoptime.rmempty = false;
+stoptime:value("00:00")
+stoptime:value("01:00")
+stoptime:value("02:00")
+stoptime:value("03:00")
+stoptime:value("04:00")
+stoptime:value("05:00")
+stoptime:value("06:00")
+stoptime:value("07:00")
+stoptime:value("08:00")
+stoptime:value("09:00")
+stoptime:value("10:00")
+stoptime:value("11:00")
+stoptime:value("12:00")
+stoptime:value("13:00")
+stoptime:value("14:00")
+stoptime:value("15:00")
+stoptime:value("16:00")
+stoptime:value("17:00")
+stoptime:value("18:00")
+stoptime:value("19:00")
+stoptime:value("20:00")
+stoptime:value("21:00")
+stoptime:value("22:00")
+stoptime:value("23:00")
+
+function stoptime.validate(self, value, d)
+    return time_validator(self, value, translate("Stop Time"))
+end
+-- END Stop Wifi Dropdown
+
+
+-- BEGIN Force Wifi Stop Checkbox
+force_wifi = d:option(Flag, "forcewifidown", translate("Force disabling wifi even if stations associated"))
+force_wifi.default = false
+force_wifi.rmempty = false;
+
+function force_wifi.validate(self, value, d)
     if value == "0" then
         if file_exists("/usr/bin/iwinfo") then
             return value
@@ -248,108 +336,7 @@ function workday_forcewifidown.validate(self, value, section)
         return "1"
     end
 end
--- END Workday Schedule Options
+-- END Force Wifi Checkbox
 
--- BEGIN Weekend Schedule Options (stored in global section)
-weekend_enabled = global_section:option(Flag, "weekend_enabled", translate("Enable Weekend Schedule"))
-weekend_enabled.optional = false
-weekend_enabled.rmempty = false
-weekend_enabled.default = 1
-
-weekend_starttime = global_section:option(Value, "weekend_starttime", translate("Weekend WiFi Start Time"))
-weekend_starttime:depends("weekend_enabled", "1")
-weekend_starttime.optional = false
-weekend_starttime.rmempty = false
-for hour = 0, 23 do
-    weekend_starttime:value(string.format("%02d:00", hour))
-    if hour ~= 23 then
-        weekend_starttime:value(string.format("%02d:30", hour))
-    end
-end
-function weekend_starttime.validate(self, value, section)
-    return time_validator(self, value, translate("Weekend Start Time"))
-end
-
-weekend_stoptime = global_section:option(Value, "weekend_stoptime", translate("Weekend WiFi Stop Time"))
-weekend_stoptime:depends("weekend_enabled", "1")
-weekend_stoptime.optional = false
-weekend_stoptime.rmempty = false
-for hour = 0, 23 do
-    weekend_stoptime:value(string.format("%02d:00", hour))
-    if hour ~= 23 then
-        weekend_stoptime:value(string.format("%02d:30", hour))
-    end
-end
-function weekend_stoptime.validate(self, value, section)
-    return time_validator(self, value, translate("Weekend Stop Time"))
-end
-
-weekend_forcewifidown = global_section:option(Flag, "weekend_forcewifidown", translate("Force disabling wifi even if stations associated on weekends"))
-weekend_forcewifidown:depends("weekend_enabled", "1")
-weekend_forcewifidown.default = false
-weekend_forcewifidown.rmempty = false
-function weekend_forcewifidown.validate(self, value, section)
-    if value == "0" then
-        if file_exists("/usr/bin/iwinfo") then
-            return value
-        else
-            return nil, translate("Could not find required programm /usr/bin/iwinfo")
-        end
-    else
-        return "1"
-    end
-end
--- END Weekend Schedule Options
-
--- BEGIN Holiday Schedule Options (stored in global section)
-holiday_enabled = global_section:option(Flag, "holiday_enabled", translate("Enable Holiday Schedule"))
-holiday_enabled.optional = false
-holiday_enabled.rmempty = false
-holiday_enabled.default = 1
-
-holiday_starttime = global_section:option(Value, "holiday_starttime", translate("Holiday WiFi Start Time"))
-holiday_starttime:depends("holiday_enabled", "1")
-holiday_starttime.optional = false
-holiday_starttime.rmempty = false
-for hour = 0, 23 do
-    holiday_starttime:value(string.format("%02d:00", hour))
-    if hour ~= 23 then
-        holiday_starttime:value(string.format("%02d:30", hour))
-    end
-end
-function holiday_starttime.validate(self, value, section)
-    return time_validator(self, value, translate("Holiday Start Time"))
-end
-
-holiday_stoptime = global_section:option(Value, "holiday_stoptime", translate("Holiday WiFi Stop Time"))
-holiday_stoptime:depends("holiday_enabled", "1")
-holiday_stoptime.optional = false
-holiday_stoptime.rmempty = false
-for hour = 0, 23 do
-    holiday_stoptime:value(string.format("%02d:00", hour))
-    if hour ~= 23 then
-        holiday_stoptime:value(string.format("%02d:30", hour))
-    end
-end
-function holiday_stoptime.validate(self, value, section)
-    return time_validator(self, value, translate("Holiday Stop Time"))
-end
-
-holiday_forcewifidown = global_section:option(Flag, "holiday_forcewifidown", translate("Force disabling wifi even if stations associated on holidays"))
-holiday_forcewifidown:depends("holiday_enabled", "1")
-holiday_forcewifidown.default = false
-holiday_forcewifidown.rmempty = false
-function holiday_forcewifidown.validate(self, value, section)
-    if value == "0" then
-        if file_exists("/usr/bin/iwinfo") then
-            return value
-        else
-            return nil, translate("Could not find required programm /usr/bin/iwinfo")
-        end
-    else
-        return "1"
-    end
-end
--- END Holiday Schedule Options
 
 return m
