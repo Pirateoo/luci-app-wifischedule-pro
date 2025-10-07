@@ -93,40 +93,33 @@ enable_api.rmempty = false
 enable_api.default = 0
 
 -- Holiday API URL - only shown when API is enabled (using proper dependency syntax)
-holiday_api_url = global_section:option(TextValue, "holiday_api_url", translate("Holiday API URL"))
-holiday_api_url:depends({enable_api = "1"})
+holiday_api_url = global_section:option(Value, "holiday_api_url", translate("Holiday API URL"))
 holiday_api_url.optional = true
-holiday_api_url.rows = 3
 holiday_api_url.description = translate("URL for external holiday API. Use {date}, {region}, {country}, {language} as placeholders, e.g., https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}")
 
 -- API Key (optional)
 holiday_api_key = global_section:option(Value, "holiday_api_key", translate("Holiday API Key"))
 holiday_api_key.optional = true
-holiday_api_key:depends("enable_api", "1")
 holiday_api_key.password = true
 holiday_api_key.description = translate("API key if required by the holiday service")
 
 -- API Region Code
 holiday_api_region = global_section:option(Value, "holiday_api_region", translate("Holiday API Region Code"))
 holiday_api_region.optional = true
-holiday_api_region:depends("enable_api", "1")
 holiday_api_region.description = translate("Region code used by the holiday API (e.g., US, GB, DE). Overrides the region setting for API calls.")
 
 -- API Country Code
 holiday_api_country = global_section:option(Value, "holiday_api_country", translate("Holiday API Country Code"))
 holiday_api_country.optional = true
-holiday_api_country:depends("enable_api", "1")
 holiday_api_country.description = translate("Country code parameter for the holiday API (alternative to region)")
 
 -- API Language
 holiday_api_language = global_section:option(Value, "holiday_api_language", translate("Holiday API Language"))
 holiday_api_language.optional = true
-holiday_api_language:depends("enable_api", "1")
 holiday_api_language.description = translate("Language code for localized holiday names (e.g., en, de, fr)")
 
 -- Current API URL display
 current_api_url = global_section:option(DummyValue, "_current_api_url", translate("Current API URL"))
-current_api_url:depends("enable_api", "1")
 function current_api_url.cfgvalue(self, section)
     local uci_api_url = self.map:get("wifi_schedule", section, "holiday_api_url")
     if uci_api_url and uci_api_url ~= "" then
@@ -216,16 +209,9 @@ csv_section.anonymous = true
 
 csv_upload_btn = csv_section:option(Button, "_upload_csv", translate("Upload CSV Schedule"))
 csv_upload_btn.inputtitle = translate("Upload CSV File")
-csv_upload_btn:depends("enabled", "1") -- Only show if main scheduling is enabled
 function csv_upload_btn.write(self, section)
     -- Redirect to the upload page
     luci.http.redirect(luci.dispatcher.build_url("admin", "wifi_schedule", "upload_csv"))
-end
-
--- Add a dummy option to prevent "no configuration" message
-local dummy = csv_section:option(DummyValue, "_csv_info", translate("Current Status"))
-dummy.cfgvalue = function(self, section)
-    return translate("Click the button to upload a CSV schedule file")
 end
 
 -- END CSV Upload Section
