@@ -112,212 +112,7 @@ holiday_api_language.optional = true
 holiday_api_language:depends("enabled", "1")
 holiday_api_language.description = translate("Language code for localized holiday names (e.g., en, de, fr)")
 
--- BEGIN Workday Schedule Settings
-workday_starttime = global_section:option(Value, "workday_starttime", translate("Workday WiFi Start Time"))
-workday_starttime.optional = true
-workday_starttime:value("00:00")
-workday_starttime:value("01:00")
-workday_starttime:value("02:00")
-workday_starttime:value("03:00")
-workday_starttime:value("04:00")
-workday_starttime:value("05:00")
-workday_starttime:value("06:00")
-workday_starttime:value("07:00")
-workday_starttime:value("08:00")
-workday_starttime:value("09:00")
-workday_starttime:value("10:00")
-workday_starttime:value("11:00")
-workday_starttime:value("12:00")
-workday_starttime:value("13:00")
-workday_starttime:value("14:00")
-workday_starttime:value("15:00")
-workday_starttime:value("16:00")
-workday_starttime:value("17:00")
-workday_starttime:value("18:00")
-workday_starttime:value("19:00")
-workday_starttime:value("20:00")
-workday_starttime:value("21:00")
-workday_starttime:value("22:00")
-workday_starttime:value("23:00")
-function workday_starttime.validate(self, value, section)
-    if value and value ~= "" then
-        return time_validator(self, value, translate("Workday Start Time"))
-    end
-    return value
-end
 
-workday_stoptime = global_section:option(Value, "workday_stoptime", translate("Workday WiFi Stop Time"))
-workday_stoptime.optional = true
-workday_stoptime:value("00:00")
-workday_stoptime:value("01:00")
-workday_stoptime:value("02:00")
-workday_stoptime:value("03:00")
-workday_stoptime:value("04:00")
-workday_stoptime:value("05:00")
-workday_stoptime:value("06:00")
-workday_stoptime:value("07:00")
-workday_stoptime:value("08:00")
-workday_stoptime:value("09:00")
-workday_stoptime:value("10:00")
-workday_stoptime:value("11:00")
-workday_stoptime:value("12:00")
-workday_stoptime:value("13:00")
-workday_stoptime:value("14:00")
-workday_stoptime:value("15:00")
-workday_stoptime:value("16:00")
-workday_stoptime:value("17:00")
-workday_stoptime:value("18:00")
-workday_stoptime:value("19:00")
-workday_stoptime:value("20:00")
-workday_stoptime:value("21:00")
-workday_stoptime:value("22:00")
-workday_stoptime:value("23:00")
-function workday_stoptime.validate(self, value, section)
-    if value and value ~= "" then
-        return time_validator(self, value, translate("Workday Stop Time"))
-    end
-    return value
-end
-
--- END Workday Schedule Settings
-
--- BEGIN Weekend Schedule Settings
-weekend_starttime = global_section:option(Value, "weekend_starttime", translate("Weekend WiFi Start Time"))
-weekend_starttime.optional = true
-weekend_starttime:value("00:00")
-weekend_starttime:value("01:00")
-weekend_starttime:value("02:00")
-weekend_starttime:value("03:00")
-weekend_starttime:value("04:00")
-weekend_starttime:value("05:00")
-weekend_starttime:value("06:00")
-weekend_starttime:value("07:00")
-weekend_starttime:value("08:00")
-weekend_starttime:value("09:00")
-weekend_starttime:value("10:00")
-weekend_starttime:value("11:00")
-weekend_starttime:value("12:00")
-weekend_starttime:value("13:00")
-weekend_starttime:value("14:00")
-weekend_starttime:value("15:00")
-weekend_starttime:value("16:00")
-weekend_starttime:value("17:00")
-weekend_starttime:value("18:00")
-weekend_starttime:value("19:00")
-weekend_starttime:value("20:00")
-weekend_starttime:value("21:00")
-weekend_starttime:value("22:00")
-weekend_starttime:value("23:00")
-function weekend_starttime.validate(self, value, section)
-    if value and value ~= "" then
-        return time_validator(self, value, translate("Weekend Start Time"))
-    end
-    return value
-end
-
-weekend_stoptime = global_section:option(Value, "weekend_stoptime", translate("Weekend WiFi Stop Time"))
-weekend_stoptime.optional = true
-weekend_stoptime:value("00:00")
-weekend_stoptime:value("01:00")
-weekend_stoptime:value("02:00")
-weekend_stoptime:value("03:00")
-weekend_stoptime:value("04:00")
-weekend_stoptime:value("05:00")
-weekend_stoptime:value("06:00")
-weekend_stoptime:value("07:00")
-weekend_stoptime:value("08:00")
-weekend_stoptime:value("09:00")
-weekend_stoptime:value("10:00")
-weekend_stoptime:value("11:00")
-weekend_stoptime:value("12:00")
-weekend_stoptime:value("13:00")
-weekend_stoptime:value("14:00")
-weekend_stoptime:value("15:00")
-weekend_stoptime:value("16:00")
-weekend_stoptime:value("17:00")
-weekend_stoptime:value("18:00")
-weekend_stoptime:value("19:00")
-weekend_stoptime:value("20:00")
-weekend_stoptime:value("21:00")
-weekend_stoptime:value("22:00")
-weekend_stoptime:value("23:00")
-function weekend_stoptime.validate(self, value, section)
-    if value and value ~= "" then
-        return time_validator(self, value, translate("Weekend Stop Time"))
-    end
-    return value
-end
-
--- END Weekend Schedule Settings
-
--- BEGIN Holiday Schedule Settings
-holiday_starttime = global_section:option(Value, "holiday_starttime", translate("Holiday WiFi Start Time"))
-holiday_starttime.optional = true
-holiday_starttime:value("00:00")
-holiday_starttime:value("01:00")
-holiday_starttime:value("02:00")
-holiday_starttime:value("03:00")
-holiday_starttime:value("04:00")
-holiday_starttime:value("05:00")
-holiday_starttime:value("06:00")
-holiday_starttime:value("07:00")
-holiday_starttime:value("08:00")
-holiday_starttime:value("09:00")
-holiday_starttime:value("10:00")
-holiday_starttime:value("11:00")
-holiday_starttime:value("12:00")
-holiday_starttime:value("13:00")
-holiday_starttime:value("14:00")
-holiday_starttime:value("15:00")
-holiday_starttime:value("16:00")
-holiday_starttime:value("17:00")
-holiday_starttime:value("18:00")
-holiday_starttime:value("19:00")
-holiday_starttime:value("20:00")
-holiday_starttime:value("21:00")
-holiday_starttime:value("22:00")
-holiday_starttime:value("23:00")
-function holiday_starttime.validate(self, value, section)
-    if value and value ~= "" then
-        return time_validator(self, value, translate("Holiday Start Time"))
-    end
-    return value
-end
-
-holiday_stoptime = global_section:option(Value, "holiday_stoptime", translate("Holiday WiFi Stop Time"))
-holiday_stoptime.optional = true
-holiday_stoptime:value("00:00")
-holiday_stoptime:value("01:00")
-holiday_stoptime:value("02:00")
-holiday_stoptime:value("03:00")
-holiday_stoptime:value("04:00")
-holiday_stoptime:value("05:00")
-holiday_stoptime:value("06:00")
-holiday_stoptime:value("07:00")
-holiday_stoptime:value("08:00")
-holiday_stoptime:value("09:00")
-holiday_stoptime:value("10:00")
-holiday_stoptime:value("11:00")
-holiday_stoptime:value("12:00")
-holiday_stoptime:value("13:00")
-holiday_stoptime:value("14:00")
-holiday_stoptime:value("15:00")
-holiday_stoptime:value("16:00")
-holiday_stoptime:value("17:00")
-holiday_stoptime:value("18:00")
-holiday_stoptime:value("19:00")
-holiday_stoptime:value("20:00")
-holiday_stoptime:value("21:00")
-holiday_stoptime:value("22:00")
-holiday_stoptime:value("23:00")
-function holiday_stoptime.validate(self, value, section)
-    if value and value ~= "" then
-        return time_validator(self, value, translate("Holiday Stop Time"))
-    end
-    return value
-end
-
--- END Holiday Schedule Settings
 
 -- BEGIN Global Logging Checkbox
 global_logging = global_section:option(Flag, "logging", translate("Enable logging"))
@@ -402,109 +197,47 @@ end
 
 -- END CSV Upload Section
 
--- BEGIN Section
-d = m:section(TypedSection, "entry", "Legacy Weekly Schedule (Lower Priority)", 
-    translate("Legacy weekly schedule entries (used when no CSV or holiday schedule matches). These have lower priority than CSV schedules and holiday-specific schedules."))
-d.addremove = true  
---d.anonymous = true
--- END Section
+-- Replace legacy weekly schedule with workday/holiday/weekend specific options in the global section
 
--- BEGIN Enable Checkbox
-c = d:option(Flag, "enabled", translate("Enable"))
-c.optional=false; c.rmempty = false;
--- END Enable Checkbox
+-- BEGIN Workday Schedule Options (stored in global section)
+workday_enabled = global_section:option(Flag, "workday_enabled", translate("Enable Workday Schedule"))
+workday_enabled.optional = false
+workday_enabled.rmempty = false
+workday_enabled.default = 1
 
-
--- BEGIN Day(s) of Week
-dow = d:option(MultiValue, "daysofweek", translate("Day(s) of Week"))
-dow.optional = false
-dow.rmempty = false
-dow:value("Monday")
-dow:value("Tuesday")
-dow:value("Wednesday")
-dow:value("Thursday")
-dow:value("Friday")
-dow:value("Saturday")
-dow:value("Sunday")
--- END Day(s) of Weel
-
--- BEGIN Start Wifi Dropdown
-starttime =  d:option(Value, "starttime", translate("Start WiFi"))
-starttime.optional=false; 
-starttime.rmempty = false;
-starttime:value("00:00")
-starttime:value("01:00")
-starttime:value("02:00")
-starttime:value("03:00")
-starttime:value("04:00")
-starttime:value("05:00")
-starttime:value("06:00")
-starttime:value("07:00")
-starttime:value("08:00")
-starttime:value("09:00")
-starttime:value("10:00")
-starttime:value("11:00")
-starttime:value("12:00")
-starttime:value("13:00")
-starttime:value("14:00")
-starttime:value("15:00")
-starttime:value("16:00")
-starttime:value("17:00")
-starttime:value("18:00")
-starttime:value("19:00")
-starttime:value("20:00")
-starttime:value("21:00")
-starttime:value("22:00")
-starttime:value("23:00")
-
-function starttime.validate(self, value, d)
-    return time_validator(self, value, translate("Start Time"))
+workday_starttime = global_section:option(Value, "workday_starttime", translate("Workday WiFi Start Time"))
+workday_starttime:depends("workday_enabled", "1")
+workday_starttime.optional = false
+workday_starttime.rmempty = false
+for hour = 0, 23 do
+    workday_starttime:value(string.format("%02d:00", hour))
+    if hour ~= 23 then
+        workday_starttime:value(string.format("%02d:30", hour))
+    end
+end
+function workday_starttime.validate(self, value, section)
+    return time_validator(self, value, translate("Workday Start Time"))
 end
 
--- END Start Wifi Dropdown
-
-
--- BEGIN Stop Wifi Dropdown
-stoptime =  d:option(Value, "stoptime", translate("Stop WiFi"))
-stoptime.optional=false;
-stoptime.rmempty = false;
-stoptime:value("00:00")
-stoptime:value("01:00")
-stoptime:value("02:00")
-stoptime:value("03:00")
-stoptime:value("04:00")
-stoptime:value("05:00")
-stoptime:value("06:00")
-stoptime:value("07:00")
-stoptime:value("08:00")
-stoptime:value("09:00")
-stoptime:value("10:00")
-stoptime:value("11:00")
-stoptime:value("12:00")
-stoptime:value("13:00")
-stoptime:value("14:00")
-stoptime:value("15:00")
-stoptime:value("16:00")
-stoptime:value("17:00")
-stoptime:value("18:00")
-stoptime:value("19:00")
-stoptime:value("20:00")
-stoptime:value("21:00")
-stoptime:value("22:00")
-stoptime:value("23:00")
-
-function stoptime.validate(self, value, d)
-    return time_validator(self, value, translate("Stop Time"))
+workday_stoptime = global_section:option(Value, "workday_stoptime", translate("Workday WiFi Stop Time"))
+workday_stoptime:depends("workday_enabled", "1")
+workday_stoptime.optional = false
+workday_stoptime.rmempty = false
+for hour = 0, 23 do
+    workday_stoptime:value(string.format("%02d:00", hour))
+    if hour ~= 23 then
+        workday_stoptime:value(string.format("%02d:30", hour))
+    end
 end
--- END Stop Wifi Dropdown
+function workday_stoptime.validate(self, value, section)
+    return time_validator(self, value, translate("Workday Stop Time"))
+end
 
-
--- BEGIN Force Wifi Stop Checkbox
-force_wifi = d:option(Flag, "forcewifidown", translate("Force disabling wifi even if stations associated"))
-force_wifi.default = false
-force_wifi.rmempty = false;
-
-function force_wifi.validate(self, value, d)
+workday_forcewifidown = global_section:option(Flag, "workday_forcewifidown", translate("Force disabling wifi even if stations associated on workdays"))
+workday_forcewifidown:depends("workday_enabled", "1")
+workday_forcewifidown.default = false
+workday_forcewifidown.rmempty = false
+function workday_forcewifidown.validate(self, value, section)
     if value == "0" then
         if file_exists("/usr/bin/iwinfo") then
             return value
@@ -515,7 +248,108 @@ function force_wifi.validate(self, value, d)
         return "1"
     end
 end
--- END Force Wifi Checkbox
+-- END Workday Schedule Options
 
+-- BEGIN Weekend Schedule Options (stored in global section)
+weekend_enabled = global_section:option(Flag, "weekend_enabled", translate("Enable Weekend Schedule"))
+weekend_enabled.optional = false
+weekend_enabled.rmempty = false
+weekend_enabled.default = 1
+
+weekend_starttime = global_section:option(Value, "weekend_starttime", translate("Weekend WiFi Start Time"))
+weekend_starttime:depends("weekend_enabled", "1")
+weekend_starttime.optional = false
+weekend_starttime.rmempty = false
+for hour = 0, 23 do
+    weekend_starttime:value(string.format("%02d:00", hour))
+    if hour ~= 23 then
+        weekend_starttime:value(string.format("%02d:30", hour))
+    end
+end
+function weekend_starttime.validate(self, value, section)
+    return time_validator(self, value, translate("Weekend Start Time"))
+end
+
+weekend_stoptime = global_section:option(Value, "weekend_stoptime", translate("Weekend WiFi Stop Time"))
+weekend_stoptime:depends("weekend_enabled", "1")
+weekend_stoptime.optional = false
+weekend_stoptime.rmempty = false
+for hour = 0, 23 do
+    weekend_stoptime:value(string.format("%02d:00", hour))
+    if hour ~= 23 then
+        weekend_stoptime:value(string.format("%02d:30", hour))
+    end
+end
+function weekend_stoptime.validate(self, value, section)
+    return time_validator(self, value, translate("Weekend Stop Time"))
+end
+
+weekend_forcewifidown = global_section:option(Flag, "weekend_forcewifidown", translate("Force disabling wifi even if stations associated on weekends"))
+weekend_forcewifidown:depends("weekend_enabled", "1")
+weekend_forcewifidown.default = false
+weekend_forcewifidown.rmempty = false
+function weekend_forcewifidown.validate(self, value, section)
+    if value == "0" then
+        if file_exists("/usr/bin/iwinfo") then
+            return value
+        else
+            return nil, translate("Could not find required programm /usr/bin/iwinfo")
+        end
+    else
+        return "1"
+    end
+end
+-- END Weekend Schedule Options
+
+-- BEGIN Holiday Schedule Options (stored in global section)
+holiday_enabled = global_section:option(Flag, "holiday_enabled", translate("Enable Holiday Schedule"))
+holiday_enabled.optional = false
+holiday_enabled.rmempty = false
+holiday_enabled.default = 1
+
+holiday_starttime = global_section:option(Value, "holiday_starttime", translate("Holiday WiFi Start Time"))
+holiday_starttime:depends("holiday_enabled", "1")
+holiday_starttime.optional = false
+holiday_starttime.rmempty = false
+for hour = 0, 23 do
+    holiday_starttime:value(string.format("%02d:00", hour))
+    if hour ~= 23 then
+        holiday_starttime:value(string.format("%02d:30", hour))
+    end
+end
+function holiday_starttime.validate(self, value, section)
+    return time_validator(self, value, translate("Holiday Start Time"))
+end
+
+holiday_stoptime = global_section:option(Value, "holiday_stoptime", translate("Holiday WiFi Stop Time"))
+holiday_stoptime:depends("holiday_enabled", "1")
+holiday_stoptime.optional = false
+holiday_stoptime.rmempty = false
+for hour = 0, 23 do
+    holiday_stoptime:value(string.format("%02d:00", hour))
+    if hour ~= 23 then
+        holiday_stoptime:value(string.format("%02d:30", hour))
+    end
+end
+function holiday_stoptime.validate(self, value, section)
+    return time_validator(self, value, translate("Holiday Stop Time"))
+end
+
+holiday_forcewifidown = global_section:option(Flag, "holiday_forcewifidown", translate("Force disabling wifi even if stations associated on holidays"))
+holiday_forcewifidown:depends("holiday_enabled", "1")
+holiday_forcewifidown.default = false
+holiday_forcewifidown.rmempty = false
+function holiday_forcewifidown.validate(self, value, section)
+    if value == "0" then
+        if file_exists("/usr/bin/iwinfo") then
+            return value
+        else
+            return nil, translate("Could not find required programm /usr/bin/iwinfo")
+        end
+    else
+        return "1"
+    end
+end
+-- END Holiday Schedule Options
 
 return m
