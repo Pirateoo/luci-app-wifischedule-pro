@@ -56,6 +56,7 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             <div class="cbi-value">
                 <div class="cbi-value-field">
                     <input type="button" class="btn cbi-button cbi-button-apply" value="<%:Save API Configuration%>" onclick="saveApiConfig()" />
+                    <input type="button" class="btn cbi-button cbi-button-action" value="<%:Use Default URL%>" onclick="useDefaultUrl()" />
                     <input type="button" class="btn cbi-button cbi-button-action" value="<%:Test API Connection%>" onclick="testApiConnection()" />
                 </div>
             </div>
@@ -161,6 +162,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         .catch(error => {
             alert('<%:API test failed%>: ' + error);
         });
+    }
+    
+    function useDefaultUrl() {
+        // Set the default API URL for date.nager.at service
+        document.getElementById('holiday_api_url').value = 'https://date.nager.at/api/v3/IsTodayPublicHoliday/{region}?date={date}';
+        alert('<%:Default URL set. Remember to save the configuration using the Save button.%>');
     }
 //]]>
 </script>
