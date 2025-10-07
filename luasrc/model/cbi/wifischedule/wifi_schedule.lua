@@ -127,7 +127,7 @@ holiday_api_language.description = translate("Language code for localized holida
 current_api_url = global_section:option(DummyValue, "_current_api_url", translate("Current API URL"))
 current_api_url:depends("enable_api", "1")
 function current_api_url.cfgvalue(self, section)
-    local uci_api_url = self.map:get(section, "holiday_api_url")
+    local uci_api_url = self.map:get("wifi_schedule", section, "holiday_api_url")
     if uci_api_url and uci_api_url ~= "" then
         return uci_api_url
     else
@@ -217,6 +217,12 @@ csv_upload_btn:depends("enabled", "1") -- Only show if main scheduling is enable
 function csv_upload_btn.write(self, section)
     -- Redirect to the upload page
     luci.http.redirect(luci.dispatcher.build_url("admin", "wifi_schedule", "upload_csv"))
+end
+
+-- Add a dummy option to prevent "no configuration" message
+local dummy = csv_section:option(DummyValue, "_csv_info", translate("Current Status"))
+dummy.cfgvalue = function(self, section)
+    return translate("Click the button to upload a CSV schedule file")
 end
 
 -- END CSV Upload Section
