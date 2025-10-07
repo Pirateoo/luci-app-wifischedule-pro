@@ -362,7 +362,7 @@ modules.wrap    = "off"
 modules.rows    = 10
 
 function modules.cfgvalue(self, section)
-    mod=uci.get("wifi_schedule", section, "modules")
+    mod = self.map:get("wifi_schedule", section, "modules")
     if mod == nil then
         mod=""
     end
@@ -373,9 +373,7 @@ end
 function modules.write(self, section, value)
     if value then
         value_list = value:gsub("\r\n", " ")
-        uci:set("wifi_schedule", section, "modules", value_list)
-        uci:save("wifi_schedule")
-        uci:commit("wifi_schedule")
+        self.map:set("wifi_schedule", section, "modules", value_list)
     end
 end
 -- END Modules
