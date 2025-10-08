@@ -133,21 +133,21 @@ function upload_csv()
             
             if calendar.store_csv_schedule(schedule) then
                 -- Render success page with redirect
-                luci.template.render("wifischedule.csv_upload", {message = "CSV file uploaded and processed successfully", message_type = "success"})
+                luci.template.render("wifischedule/csv_upload", {message = "CSV file uploaded and processed successfully", message_type = "success"})
             else
                 -- Render error page
-                luci.template.render("wifischedule.csv_upload", {message = "Error saving CSV schedule", message_type = "error"})
+                luci.template.render("wifischedule/csv_upload", {message = "Error saving CSV schedule", message_type = "error"})
             end
         else
             -- Render error page
-            luci.template.render("wifischedule.csv_upload", {message = "Error reading uploaded file", message_type = "error"})
+            luci.template.render("wifischedule/csv_upload", {message = "Error reading uploaded file", message_type = "error"})
         end
         
         -- Clean up temporary file
         os.remove("/tmp/wifi_schedule_upload.csv")
     else
         -- Show upload form
-        luci.template.render("wifischedule.csv_upload")
+        luci.template.render("wifischedule/csv_upload")
     end
 end
 

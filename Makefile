@@ -22,6 +22,18 @@ LUCI_TITLE:=Turns WiFi on and off according to a schedule
 LUCI_DEPENDS:=+wifischedule
 LUCI_PKGARCH:=all
 
+define Package/$(PKG_NAME)/install
+    $(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller/wifischedule
+    $(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi/wifischedule
+    $(INSTALL_DIR) $(1)/usr/lib/lua/luci/util/wifischedule
+    $(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/wifischedule
+
+    $(INSTALL_DATA) ./luasrc/controller/wifischedule/*.lua $(1)/usr/lib/lua/luci/controller/wifischedule/
+    $(INSTALL_DATA) ./luasrc/model/cbi/wifischedule/*.lua $(1)/usr/lib/lua/luci/model/cbi/wifischedule/
+    $(INSTALL_DATA) ./luasrc/util/wifischedule/*.lua $(1)/usr/lib/lua/luci/util/wifischedule/
+    $(INSTALL_DATA) ./luasrc/view/wifischedule/*.htm $(1)/usr/lib/lua/luci/view/wifischedule/
+endef
+
 include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
