@@ -102,6 +102,25 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 <script type="text/javascript">
 //<![CDATA[
+    window.addEventListener('DOMContentLoaded', function() {
+        // Fetch current API configuration
+        fetch('<%=luci.dispatcher.build_url("admin", "wifi_schedule", "api")%>?action=get_current_config', {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.holiday_api_url) {
+                document.getElementById('holiday_api_url').value = data.holiday_api_url;
+            }
+            if (data.holiday_api_region) {
+                document.getElementById('holiday_api_region').value = data.holiday_api_region;
+            }
+        })
+        .catch(error => {
+            console.log('Could not load current config: ' + error);
+        });
+    });
+
     function saveApiConfig() {
         const form = document.getElementById('api-config-form');
         const formData = new FormData();
