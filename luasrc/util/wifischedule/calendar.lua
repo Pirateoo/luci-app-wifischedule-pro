@@ -212,7 +212,48 @@ function is_holiday_via_api(date_str)
         return nil
     end
     
-    -- Format the API URL with various parameters
+    -- Extract year from date_str for date.nager.at API (format: YYYY-MM-DD)
+    local year, month, day = date_str:match("(%d+)-(%d+)-(%d+)")
+    if not year then
+        return nil  -- Invalid date format
+    end
+    
+    -- Check if this is a date.nager.at API URL and handle it specifically
+    if api_url:match("date%.nager%.at") then
+        -- Format date.nager.at API URL - this API returns holidays for the whole year
+        -- For the date.nager.at API, use the PublicHolidays endpoint which returns an array of holidays for the year
+        local country_code = api_country or api_region or "US"  -- Use api_country first, then api_region, then default to US
+        local nager_url = "https://date.nager.at/api/v3/PublicHolidays/" .. year .. "/" .. country_code
+        
+        -- Prepare cURL command for making the HTTP request
+        local cmd = "curl -s -m 10 \"" .. nager_url .. "\""
+        
+        local result = sys.exec(cmd)
+        
+        if result and result ~= "" then
+            -- Try to parse as JSON
+            if jsonc then
+                local parsed = jsonc.parse(result)
+                if parsed and type(parsed) == "table" then
+                    -- The date.nager.at API returns an array of holiday objects
+                    -- Each object has: date, localName, name, countryCode, fixed, global, counties, launchYear, types
+                    for _, holiday in ipairs(parsed) do
+                        if holiday.date == date_str then
+                            -- This date is a holiday
+                            return true, holiday.localName or holiday.name or "Public Holiday"
+                        end
+                    end
+                    -- Date not found in holidays, so it's not a holiday
+                    return false, "Not a public holiday"
+                end
+            end
+        end
+        
+        -- If date.nager.at API fails, return nil to use fallback
+        return nil
+    end
+    
+    -- Format the API URL with various parameters for non-date.nager.at APIs
     local formatted_url = api_url
         :gsub("{{date}}", date_str)
         :gsub("{date}", date_str)
@@ -253,7 +294,7 @@ function is_holiday_via_api(date_str)
                         -- Check if any of the returned holidays matches our date
                         for _, holiday in ipairs(parsed.holidays) do
                             if holiday.date == date_str then
-                                return true, holiday.name or holiday.localName or holiday.englishName or holiday.chineseName or holiday.local_name or holiday.description or "Holiday"
+                                return true, holiday.name or holiday.localName or holiday.englishName or holiday.chineseName or holiday.local_name or parsed.description or "Holiday"
                             end
                         end
                     elseif type(parsed) == "table" and #parsed > 0 then
